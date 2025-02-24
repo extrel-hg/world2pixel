@@ -5,8 +5,13 @@ project(world2pixel)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
+file(GLOB sourcefiles
+     "source/*.h"
+     "source/*.cpp"
+)
+
 add_executable(${PROJECT_NAME}
-    source/main.cpp
+    ${sourcefiles}
 )
 
 #  GEODESK and GEOS

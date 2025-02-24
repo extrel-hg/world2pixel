@@ -1,7 +1,5 @@
-#include <geodesk/geodesk.h>
-#include <stdlib.h>
-
-using namespace geodesk;
+#include "mainheader.h"
+#include "latlonfunctions.h"
 
 //latitude - north south
 //longitude - east west
@@ -14,6 +12,8 @@ TO DO:
 * maybe dont use goto
 */
 
+// latitude longitude radius NSmove EWmove
+
 int main(int argc, char* argv[])
 {
 
@@ -22,19 +22,28 @@ int main(int argc, char* argv[])
         std::cout<<"Command parameter "<<i<<": "<<argv[i]<<"\n";
     }
 
-    float targetlatitude,targetlongitude,targetradius;
-    targetlatitude = atof(argv[1]);
-    targetlongitude = atof(argv[2]);
-    targetradius = atof(argv[3]);
+    double targetradius;
+    std::pair<double,double> targetlatlon = {std::stod(argv[1]),std::stod(argv[2])};
+    targetradius = std::stod(argv[3]);
+    std::pair<double,double> movevector = {0,50};
 
     std::string filename = "gol";
+    if(argc>6) 
+    {
+        filename = argv[6];
+    }
     if(argc>4) 
     {
-        filename = argv[4];
+        movevector.first = std::stod(argv[4]);
+        movevector.second = std::stod(argv[5]);
     }
 
     Features features(filename.c_str());
-    Features inradius = features.maxMetersFromLonLat(targetradius, targetlongitude, targetlatitude);
+    targetlatlon.first = 51.182245;
+    std::cout<<std::setprecision(8)<<targetlatlon.first<<","<<targetlatlon.second<<"\n";
+    targetlatlon = movelatlon_m(targetlatlon.first,targetlatlon.second,movevector.first,movevector.second);
+    std::cout<<targetlatlon.first<<","<<targetlatlon.second<<"\n";
+    Features inradius = features.maxMetersFromLonLat(targetradius, targetlatlon.second, targetlatlon.first);
     for (Feature curitem: inradius)
     {
         Tags tags = curitem.tags();
