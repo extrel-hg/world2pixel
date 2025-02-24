@@ -1,0 +1,1 @@
+bool isroad(Features infeatures, std::pair<double,double> searchlatlon, double radius);

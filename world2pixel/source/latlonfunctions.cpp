@@ -30,9 +30,9 @@ lattom - convert amount of degrees of latitude to length of meters
 lontom - convert amount of degrees of longitude to meters
 */
 
-std::pair<double,double> movelatlon_m(double inlat, double inlon, double NSmove, double EWmove) //returns latlon pair of coordinates, moved by meters. longitude is moved first.
+std::pair<double,double> movelatlon_m(std::pair<double,double> targetlaton, double NSmove, double EWmove) //returns latlon pair of coordinates, moved by meters. longitude is moved first.
 {
-    double movedlat = inlat + mtolat(NSmove);
-    double movedlon = inlon + mtolon(EWmove, inlat);
+    double movedlat = targetlaton.first + mtolat(NSmove);
+    double movedlon = targetlaton.second + mtolon(EWmove, targetlaton.first);
     return {movedlat,movedlon};
 }

@@ -1,5 +1,6 @@
 #include "mainheader.h"
 #include "latlonfunctions.h"
+#include "mapqueryfunctions.h"
 
 //latitude - north south
 //longitude - east west
@@ -21,25 +22,38 @@ int main(int argc, char* argv[])
     {
         std::cout<<"Command parameter "<<i<<": "<<argv[i]<<"\n";
     }
-
-    double targetradius;
+    
     std::pair<double,double> targetlatlon = {std::stod(argv[1]),std::stod(argv[2])};
-    targetradius = std::stod(argv[3]);
-    std::pair<double,double> movevector = {0,50};
 
     std::string filename = "gol";
-    if(argc>6) 
+    if(argc>3) 
     {
-        filename = argv[6];
-    }
-    if(argc>4) 
-    {
-        movevector.first = std::stod(argv[4]);
-        movevector.second = std::stod(argv[5]);
+        filename = argv[3];
     }
 
     Features features(filename.c_str());
-    targetlatlon.first = 51.182245;
+
+    for(int y = 0; y < 100; y++)
+    {
+        for(int x = 0; x < 100; x++)
+        {
+            std::pair<double,double> searchlatlon = movelatlon_m(targetlatlon,-y*10,x*10);
+            if(isroad(features,searchlatlon,10))
+            {
+                std::cout<<"X";
+            } else {
+                std::cout<<"-";
+            }
+        }
+        std::cout<<"\n";
+    }
+    
+}
+
+/*THE GRAVEYARD*/
+/*Rest in peace code prototypes [*]*/
+
+/*
     std::cout<<std::setprecision(8)<<targetlatlon.first<<","<<targetlatlon.second<<"\n";
     targetlatlon = movelatlon_m(targetlatlon.first,targetlatlon.second,movevector.first,movevector.second);
     std::cout<<targetlatlon.first<<","<<targetlatlon.second<<"\n";
@@ -82,19 +96,7 @@ int main(int argc, char* argv[])
             }
         }
     }
-}
-
-/*
-SONGS THAT YOUTUBE PLAYED WHILE DEVVING
-2025.02.19
-14:20
-https://www.youtube.com/watch?v=Hd2-Akz6Ht4
-14:30
-https://www.youtube.com/watch?v=0JliRJNGwQU
-*/
-
-/*THE GRAVEYARD*/
-/*Rest in peace code prototypes [*]*/
+    */
 
 /*
     Box bounds = Box::ofWSEN(
