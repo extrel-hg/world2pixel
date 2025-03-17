@@ -2,21 +2,18 @@
 
 bool isroad(Features infeatures, std::pair<double,double> searchlatlon, double radius)
 {
-    double inlon = searchlatlon.second;
-    double inlat = searchlatlon.first;
-    Features inradius = infeatures.maxMetersFromLonLat(radius, inlon, inlat);
-    bool hasroad = false;
+    infeatures = infeatures("w");
+    Features inradius = infeatures.maxMetersFromLonLat(radius, searchlatlon.second, searchlatlon.first);
     for (Feature curitem: inradius)
     {
         Tags tags = curitem.tags();
         for(Tag curtag: tags)
         {
-            std::string key = curtag.key();
-            if(key == "highway")
+            if(curtag.key() == "highway")
             {
-                hasroad = true;
+                return true;
             }
         }
     }
-    return hasroad;
+    return false;
 }

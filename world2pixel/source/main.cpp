@@ -23,7 +23,13 @@ int main(int argc, char* argv[])
         std::cout<<"Command parameter "<<i<<": "<<argv[i]<<"\n";
     }
     
-    std::pair<double,double> targetlatlon = {std::stod(argv[1]),std::stod(argv[2])};
+    std::pair<double,double> targetlatlon = {std::stod(argv[1]),std::stod(argv[2])}; //north west corner
+    double side, searchradius;
+    int tilesperside = 100;
+    side = 100;
+    double tileside = side/tilesperside;
+    searchradius = (side/tilesperside)/1;
+
 
     std::string filename = "gol";
     if(argc>3) 
@@ -32,35 +38,64 @@ int main(int argc, char* argv[])
     }
 
     Features rootfeatures(filename.c_str());
+    Features features = rootfeatures;
+    {
+        double west, south, east, north, margin;
+        margin = 100;
+        west = targetlatlon.second - mtolon(margin,targetlatlon.first);
+        east = targetlatlon.second + mtolon(side+margin,targetlatlon.first);
+        north = targetlatlon.first + mtolat(margin);
+        south = targetlatlon.first - mtolat(margin);
+
+        Box mapbounds = Box::ofWSEN(west, south, east, north);
+        features = features(mapbounds);
+    }
 
     //filter out features that arent needed, to speed up a little the queries
-    Features features = rootfeatures("*[!admin_level]");
+    features = features("*[!admin_level]");
     features = features("*[!region_category]");
+    features = features("*[!route]");
+    features = features("*[!boundary]");
 
     //test code, check if any of the features that were supposed to be filtered out, were.
     for (Feature testf : features)
     {
         Tags tags = testf.tags();
+        //std::cout<<testf.id()<<"\n";
         for(Tag tag: tags)
         {
             if(tag.key() == "admin_level") std::cout<<"endl\n";
             if(tag.key() == "region_category") std::cout<<"ada\n";
+            if(tag.key() == "route") std::cout<<"ee\n";
+            if(tag.key() == "boundary") std::cout<<"ABD\n";
         }
     }
 
-    for(int y = 0; y < 100; y++)
     {
-        for(int x = 0; x < 100; x++)
+        std::vector<std::string> finishedmap;
+        for(int y = 0; y < tilesperside; y++)
         {
-            std::pair<double,double> searchlatlon = movelatlon_m(targetlatlon,-y*10,x*10);
-            if(isroad(features,searchlatlon,10))
+            std::string line="";
+            for(int x = 0; x < tilesperside; x++)
             {
-                std::cout<<"X";
-            } else {
-                std::cout<<"-";
+                std::cout<<y*tilesperside+x+1<<"/"<<tilesperside*tilesperside<<"\n";
+                std::pair<double,double> searchlatlon = movelatlon_m(targetlatlon,-y*tileside,x*tileside);
+                if(isroad(features,searchlatlon,searchradius))
+                {
+                    line = line + "X";
+                } else {
+                    line = line + "-";
+                }
+                if(x<tilesperside-1) line = line + " ";
             }
+            finishedmap.push_back(line);
         }
-        std::cout<<"\n";
+
+        for(int y = 0; y < finishedmap.size(); y++)
+        {
+            std::cout<<finishedmap[y]<<"\n";
+        }
+
     }
     
 }
