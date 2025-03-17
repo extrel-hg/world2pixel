@@ -31,7 +31,22 @@ int main(int argc, char* argv[])
         filename = argv[3];
     }
 
-    Features features(filename.c_str());
+    Features rootfeatures(filename.c_str());
+
+    //filter out features that arent needed, to speed up a little the queries
+    Features features = rootfeatures("*[!admin_level]");
+    features = features("*[!region_category]");
+
+    //test code, check if any of the features that were supposed to be filtered out, were.
+    for (Feature testf : features)
+    {
+        Tags tags = testf.tags();
+        for(Tag tag: tags)
+        {
+            if(tag.key() == "admin_level") std::cout<<"endl\n";
+            if(tag.key() == "region_category") std::cout<<"ada\n";
+        }
+    }
 
     for(int y = 0; y < 100; y++)
     {
