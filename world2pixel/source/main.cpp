@@ -32,7 +32,6 @@ int main(int argc, char* argv[])
         tilesperside = std::stod(argv[3]);
         side = std::stod(argv[4]);
         radiusmodifier = std::stod(argv[5]);
-        std::cout<<radiusmodifier;
     }
 
     std::string filename = "gol";
@@ -42,7 +41,7 @@ int main(int argc, char* argv[])
     }
 
     double tileside = side/tilesperside;
-    double searchradius = (side/tilesperside)/radiusmodifier;
+    double searchradius = (side/tilesperside)*radiusmodifier;
 
     Features rootfeatures(filename.c_str());
     Features features = rootfeatures;
@@ -58,35 +57,15 @@ int main(int argc, char* argv[])
         features = features(mapbounds);
     }
 
-    //filter out features that arent needed, to speed up a little the queries
-    features = features("*[!admin_level]");
-    features = features("*[!region_category]");
-    features = features("*[!route]");
-    features = features("*[!boundary]");
-
-    //test code, check if any of the features that were supposed to be filtered out, were.
-    for (Feature testf : features)
-    {
-        Tags tags = testf.tags();
-        //std::cout<<testf.id()<<"\n";
-        for(Tag tag: tags)
-        {
-            if(tag.key() == "admin_level") std::cout<<"endl\n";
-            if(tag.key() == "region_category") std::cout<<"ada\n";
-            if(tag.key() == "route") std::cout<<"ee\n";
-            if(tag.key() == "boundary") std::cout<<"ABD\n";
-        }
-    }
-
     {
         std::vector<std::string> finishedmap;
         for(int y = 0; y < tilesperside; y++)
         {
+            std::cout<<y+1<<"/"<<tilesperside<<"\n";
             std::string line="";
             for(int x = 0; x < tilesperside; x++)
             {
-                std::cout<<y*tilesperside+x+1<<"/"<<tilesperside*tilesperside<<"\n";
-                std::pair<double,double> searchlatlon = movelatlon_m(targetlatlon,-y*tileside,x*tileside);
+                std::pair<double,double> searchlatlon = movelatlon_m(targetlatlon,-y*tileside-0.5*tileside,x*tileside+0.5*tileside);
                 if(isroad(features,searchlatlon,searchradius))
                 {
                     line = line + "X";
