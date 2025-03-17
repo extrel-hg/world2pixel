@@ -7,12 +7,22 @@ bool isroad(Features infeatures, std::pair<double,double> searchlatlon, double r
     for (Feature curitem: inradius)
     {
         Tags tags = curitem.tags();
+        bool highway = false;
+        bool asphalt = false;
         for(Tag curtag: tags)
         {
             if(curtag.key() == "highway")
             {
-                return true;
+                highway = true;
             }
+            if(curtag.key() == "surface" && curtag.value() == "asphalt")
+            {
+                asphalt = true;
+            }
+        }
+        if(highway && asphalt)
+        {
+            return true;
         }
     }
     return false;

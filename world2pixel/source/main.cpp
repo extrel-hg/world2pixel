@@ -17,25 +17,32 @@ TO DO:
 
 int main(int argc, char* argv[])
 {
-
     for(int i=0;i<argc;i++)
     {
         std::cout<<"Command parameter "<<i<<": "<<argv[i]<<"\n";
     }
     
     std::pair<double,double> targetlatlon = {std::stod(argv[1]),std::stod(argv[2])}; //north west corner
-    double side, searchradius;
     int tilesperside = 100;
-    side = 100;
-    double tileside = side/tilesperside;
-    searchradius = (side/tilesperside)/1;
+    double side = 100;
+    double radiusmodifier = 1;
 
+    if(argc>3)
+    {
+        tilesperside = std::stod(argv[3]);
+        side = std::stod(argv[4]);
+        radiusmodifier = std::stod(argv[5]);
+        std::cout<<radiusmodifier;
+    }
 
     std::string filename = "gol";
-    if(argc>3) 
+    if(argc>6) 
     {
-        filename = argv[3];
+        filename = argv[6];
     }
+
+    double tileside = side/tilesperside;
+    double searchradius = (side/tilesperside)/radiusmodifier;
 
     Features rootfeatures(filename.c_str());
     Features features = rootfeatures;
