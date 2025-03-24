@@ -65,16 +65,20 @@ int main(int argc, char* argv[])
             std::string line="";
             for(int x = 0; x < tilesperside; x++)
             {
-                std::pair<double,double> searchlatlon = movelatlon_m(targetlatlon,-y*tileside-0.5*tileside,x*tileside+0.5*tileside);
-                if(isroad(features,searchlatlon,searchradius))
+                std::pair<double,double> searchlatlon = movelatlon_m(targetlatlon,-y*5,x*5);
+                if(isroad(features,searchlatlon,5))
                 {
-                    line = line + "X";
-                } else {
-                    line = line + "-";
+                    std::pair<double,double> searchlatlon = movelatlon_m(targetlatlon,-y*tileside-0.5*tileside,x*tileside+0.5*tileside);
+                    if(isroad(features,searchlatlon,searchradius))
+                    {
+                        line = line + "X";
+                    } else {
+                        line = line + "-";
+                    }
+                    if(x<tilesperside-1) line = line + " ";
                 }
-                if(x<tilesperside-1) line = line + " ";
+                finishedmap.push_back(line);
             }
-            finishedmap.push_back(line);
         }
 
         for(int y = 0; y < finishedmap.size(); y++)
@@ -83,7 +87,6 @@ int main(int argc, char* argv[])
         }
 
     }
-    
 }
 
 /*THE GRAVEYARD*/
