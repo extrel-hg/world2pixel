@@ -72,6 +72,7 @@ int main(int argc, char* argv[])
         }
         std::cout<<"\n";
     }
+    std::cout<<"Meters per one tile: "<<tileside;
 }
 
 /*THE GRAVEYARD*/

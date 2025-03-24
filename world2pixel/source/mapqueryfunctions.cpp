@@ -1,6 +1,6 @@
 #include "mainheader.h"
 
-bool isroad(Features infeatures, std::pair<double,double> searchlatlon, double radius, int lanestosearch = 4, double lanewidth = 2.5)
+bool isroad(Features infeatures, std::pair<double,double> searchlatlon, double radius, int lanestosearch = 4, double lanewidth = 1.5)
 {
     infeatures = infeatures("*[highway]");
     infeatures = infeatures("*[!footway]");
@@ -9,22 +9,23 @@ bool isroad(Features infeatures, std::pair<double,double> searchlatlon, double r
     double inlon = searchlatlon.second;
     double inlat = searchlatlon.first;
 
-    for(int i = 0; i < lanestosearch; i++)
+    //Checks if current tile is a highway
+    Features inradius = infeatures.maxMetersFromLonLat(radius, inlon, inlat);
+    if(inradius) return true; //returns true when the Features inradius contains at least one feature
+    return false;
+}
+
+/*
+    for (Feature curitem: inradius)
     {
-        Features inradius = infeatures.maxMetersFromLonLat(radius+i*lanewidth, inlon, inlat);
-        for (Feature curitem: inradius)
+        Tags tags = curitem.tags();
+        for(Tag curtag: tags)
         {
-            Tags tags = curitem.tags();
-            for(Tag curtag: tags)
+            std::string key = curtag.key();
+            if(key == "highway")
             {
-                std::string key = curtag.key();
-                if(key == "highway")
-                {
-                    return true;
-                }
+                return true;
             }
         }
     }
-
-    return false;
-}
+*/
