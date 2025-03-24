@@ -13,7 +13,7 @@ TO DO:
 * maybe dont use goto
 */
 
-// latitude longitude radius NSmove EWmove
+// latitude longitude tilesperside side radiusmodifier
 
 int main(int argc, char* argv[])
 {
@@ -57,35 +57,20 @@ int main(int argc, char* argv[])
         features = features(mapbounds);
     }
 
+    for(int y = 0; y < tilesperside; y++)
     {
-        std::vector<std::string> finishedmap;
-        for(int y = 0; y < tilesperside; y++)
+        for(int x = 0; x < tilesperside; x++)
         {
-            std::cout<<y+1<<"/"<<tilesperside<<"\n";
-            std::string line="";
-            for(int x = 0; x < tilesperside; x++)
+            std::pair<double,double> searchlatlon = movelatlon_m(targetlatlon,-y*tileside-0.5*tileside,x*tileside+0.5*tileside);
+            if(isroad(features,searchlatlon,searchradius))
             {
-                std::pair<double,double> searchlatlon = movelatlon_m(targetlatlon,-y*5,x*5);
-                if(isroad(features,searchlatlon,5))
-                {
-                    std::pair<double,double> searchlatlon = movelatlon_m(targetlatlon,-y*tileside-0.5*tileside,x*tileside+0.5*tileside);
-                    if(isroad(features,searchlatlon,searchradius))
-                    {
-                        line = line + "X";
-                    } else {
-                        line = line + "-";
-                    }
-                    if(x<tilesperside-1) line = line + " ";
-                }
-                finishedmap.push_back(line);
+                std::cout<<"X";
+            } else {
+                std::cout<<"-";
             }
+            if(x<tilesperside-1) std::cout<<" ";
         }
-
-        for(int y = 0; y < finishedmap.size(); y++)
-        {
-            std::cout<<finishedmap[y]<<"\n";
-        }
-
+        std::cout<<"\n";
     }
 }
 

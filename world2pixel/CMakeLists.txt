@@ -26,7 +26,7 @@ FetchContent_MakeAvailable(geodesk)
 FetchContent_Declare(geos GIT_REPOSITORY https://github.com/libgeos/geos.git GIT_TAG "origin/main")
 FetchContent_MakeAvailable(geos)
 
-set(BUILD_SHARED_LIBS ON)  # Link statically
+set(BUILD_SHARED_LIBS OFF)  # Link statically
 
 target_link_libraries(${PROJECT_NAME} geodesk)
 target_link_libraries(${PROJECT_NAME} geos_c geos)
