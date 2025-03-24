@@ -1,6 +1,6 @@
 #include "mainheader.h"
 
-bool isroad(Features infeatures, std::pair<double,double> searchlatlon, double radius, int lanestosearch = 4, double lanewidth = 1.5)
+bool isroad(Features infeatures, std::pair<double,double> searchlatlon, double radius, int lanestosearch = 10, double lanewidth = 0.25)
 {
     infeatures = infeatures("*[highway]");
     infeatures = infeatures("*[!footway]");
