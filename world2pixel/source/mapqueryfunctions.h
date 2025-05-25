@@ -1,1 +1,1 @@
-bool isroad(Features infeatures, std::pair<double,double> searchlatlon, double radius, int lanestosearch = 4, double lanewidth = 2.5);
+bool isroad(Features infeatures, std::pair<double,double> searchlatlon, double tileside, int lanestosearch = 10, double lanewidth = 3.5);
