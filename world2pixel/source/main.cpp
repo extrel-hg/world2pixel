@@ -34,6 +34,7 @@ int main(int argc, char* argv[])
     int tilesperside = 100;
     double side = 100;
     double roadscanmodifier = 1;
+    double railscanmodifier = 1;
 
     if(argc>3)
     {
@@ -46,10 +47,15 @@ int main(int argc, char* argv[])
         roadscanmodifier = std::stod(argv[5]);
     }
 
-    std::string filename = "gol";
-    if(argc>6) 
+    if(argc>6)
     {
-        filename = argv[6];
+        railscanmodifier = std::stod(argv[6]);
+    }
+
+    std::string filename = "gol";
+    if(argc>7) 
+    {
+        filename = argv[7];
     }
 
     double tileside = side/tilesperside;
@@ -73,19 +79,18 @@ int main(int argc, char* argv[])
         for(int x = 0; x < tilesperside; x++)
         {
             std::pair<double,double> searchlatlon = movelatlon_m(targetlatlon,-y*tileside-0.5*tileside,x*tileside+0.5*tileside);
-            if(isroad(features,searchlatlon,tileside,10,3.5,roadscanmodifier))
-            {
-                cchange(7);
-                std::cout<<"O"; 
-            } else if(israilroad(features,searchlatlon,tileside,roadscanmodifier))
-            {
-                cchange(8);
-                std::cout<<"X";
-            }
-            else if(isbuilding(features,searchlatlon,tileside))
+            if(isbuilding(features,searchlatlon,tileside))
             {
                 cchange(12);
                 std::cout<<char(254);
+            }else if(isroad(features,searchlatlon,tileside,10,3.5,roadscanmodifier))
+            {
+                cchange(7);
+                std::cout<<"O"; 
+            } else if(israilroad(features,searchlatlon,tileside,railscanmodifier))
+            {
+                cchange(8);
+                std::cout<<"X";
             } else if(istree_probability(features,searchlatlon,tileside)==2)
             {
                 cchange(2);
