@@ -79,30 +79,30 @@ int main(int argc, char* argv[])
         for(int x = 0; x < tilesperside; x++)
         {
             std::pair<double,double> searchlatlon = movelatlon_m(targetlatlon,-y*tileside-0.5*tileside,x*tileside+0.5*tileside);
-            if(isbuilding(features,searchlatlon,tileside))
-            {
-                cchange(12);
-                std::cout<<char(254);
-            }else if(isroad(features,searchlatlon,tileside,10,3.5,roadscanmodifier))
-            {
-                cchange(7);
-                std::cout<<"O"; 
-            } else if(israilroad(features,searchlatlon,tileside,railscanmodifier))
+            if(israilroad(features,searchlatlon,tileside,railscanmodifier))
             {
                 cchange(8);
                 std::cout<<"X";
-            } else if(istree_probability(features,searchlatlon,tileside)==2)
+            } else if(isbuilding(features,searchlatlon,tileside))
             {
-                cchange(2);
-                std::cout<<char(159);
-            } else if(istree_probability(features,searchlatlon,tileside)==1)
+                cchange(12);
+                std::cout<<char(254);
+            } else if(isroad(features,searchlatlon,tileside,10,3.5,roadscanmodifier))
             {
-                cchange(2);
-                std::cout<<".";
+                cchange(7);
+                std::cout<<"O"; 
             } else if(iswater(features,searchlatlon,tileside))
             {
                 cchange(9);
                 std::cout<<"~";
+            } else if(istree_probability(features,searchlatlon,tileside)==1)
+            {
+                cchange(2);
+                std::cout<<".";
+            } else if(istree_probability(features,searchlatlon,tileside)==2)
+            {
+                cchange(2);
+                std::cout<<char(159);
             } else if(islowgreenarea(features,searchlatlon,tileside))
             {
                 cchange(10);
