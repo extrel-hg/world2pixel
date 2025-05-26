@@ -15,6 +15,13 @@ TO DO:
 
 // latitude longitude tilesperside side radiusmodifier
 
+void cchange(int c) //Funkcja zmiany koloru tekstu!
+{
+    HANDLE hConsole;
+    hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, c);
+}
+
 int main(int argc, char* argv[])
 {
     for(int i=0;i<argc;i++)
@@ -61,8 +68,28 @@ int main(int argc, char* argv[])
             std::pair<double,double> searchlatlon = movelatlon_m(targetlatlon,-y*tileside-0.5*tileside,x*tileside+0.5*tileside);
             if(isroad(features,searchlatlon,tileside))
             {
+                cchange(7);
                 std::cout<<"X";
-            } else {
+            } else if(iswater(features,searchlatlon,tileside))
+            {
+                cchange(9);
+                std::cout<<"O";
+            } else if(isbuilding(features,searchlatlon,tileside))
+            {
+                cchange(4);
+                std::cout<<char(254);
+            } else if(islowgreenarea(features,searchlatlon,tileside))
+            {
+                cchange(10);
+                std::cout<<char(165);
+            } else if(israilroad(features,searchlatlon,tileside))
+            {
+                cchange(8);
+                std::cout<<"X";
+            }
+            else
+            {
+                cchange(8);
                 std::cout<<"-";
             }
             if(x<tilesperside-1) std::cout<<" ";
