@@ -114,7 +114,8 @@ int main(int argc, char* argv[])
             }
             else
             {
-                std::cout<<" ";
+                cchange(10);
+                std::cout<<char(137);
             }
             if(x<tilesperside-1) std::cout<<" ";
         }

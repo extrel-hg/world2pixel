@@ -3,7 +3,7 @@
 
 bool ispaved(Features infeatures, std::pair<double,double> searchlatlon, double tileside)
 {
-    infeatures = infeatures("*[landuse=commercial,construction,education,industrial,residential,retail,institutional,landfill,port]");
+    infeatures = infeatures("*[landuse=commercial,construction,education,industrial,residential,retail,institutional,landfill,port,brownfield]");
 
     double radius = tileside*0.5;
 
@@ -17,7 +17,7 @@ bool ispaved(Features infeatures, std::pair<double,double> searchlatlon, double 
 
 bool islowgreenarea(Features infeatures, std::pair<double,double> searchlatlon, double tileside)
 {
-    infeatures = infeatures("*[landuse=grass,farmland,farmyard,flowerbed,meadow,plant_nursery,vineyard,greenery,allotments],*[leisure=park,dogpark,garden,nature_reserve,playground]");
+    infeatures = infeatures("*[landuse=grass,farmland,farmyard,flowerbed,meadow,plant_nursery,vineyard,greenery,allotments,recreation_ground],*[leisure=park,dogpark,garden,nature_reserve,playground],*[natural=grassland,scrub]");
 
     double radius = tileside*0.5;
 
@@ -45,7 +45,7 @@ bool isbuilding(Features infeatures, std::pair<double,double> searchlatlon, doub
 
 bool iswater(Features infeatures, std::pair<double,double> searchlatlon, double tileside)
 {
-    infeatures = infeatures("*[water]");
+    infeatures = infeatures("*[water],*[natural=water]");
 
     double radius = tileside*0.5;
 
@@ -134,8 +134,7 @@ bool israilroad(Features infeatures, std::pair<double,double> searchlatlon, doub
 bool isroad(Features infeatures, std::pair<double,double> searchlatlon, double tileside, int lanestosearch = 10, double lanewidth = 3.5, double scanradiusmodifier=1)
 {
     infeatures = infeatures("*[highway]");
-    infeatures = infeatures("*[!footway]");
-    infeatures = infeatures("*[highway!=track,cycleway]");
+    infeatures = infeatures("*[highway!=sidewalk,cycleway,footway]");
 
     double inlon = searchlatlon.second;
     double inlat = searchlatlon.first;
