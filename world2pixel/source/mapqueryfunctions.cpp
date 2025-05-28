@@ -45,7 +45,7 @@ bool isbuilding(Features infeatures, std::pair<double,double> searchlatlon, doub
 
 bool iswater(Features infeatures, std::pair<double,double> searchlatlon, double tileside)
 {
-    infeatures = infeatures("*[water],*[natural=water]");
+    infeatures = infeatures("*[water],*[natural=water],*[waterway]");
 
     double radius = tileside*0.5;
 
@@ -131,15 +131,17 @@ bool israilroad(Features infeatures, std::pair<double,double> searchlatlon, doub
     return false;
 }
 
-bool isroad(Features infeatures, std::pair<double,double> searchlatlon, double tileside, int lanestosearch = 10, double lanewidth = 3.5, double scanradiusmodifier=1)
+int isroad(Features infeatures, std::pair<double,double> searchlatlon, double tileside, int lanestosearch = 10, double lanewidth = 3.5, double scanradiusmodifier=1)
 {
     infeatures = infeatures("*[highway]");
-    infeatures = infeatures("*[highway!=sidewalk,cycleway,footway]");
+    infeatures = infeatures("*[highway!=sidewalk,cycleway,footway,pedestrian,path]");
 
     double inlon = searchlatlon.second;
     double inlat = searchlatlon.first;
 
     double radius = lanewidth*0.5;
+
+    int typemodifier = 0;
 
     for(int i = 1; i < lanestosearch+1; i++)
     {
@@ -153,23 +155,27 @@ bool isroad(Features infeatures, std::pair<double,double> searchlatlon, double t
                 {
                     std::string key = curtag.key();
                     std::string value = curtag.value();
+                    if(key == "highway" && (value == "track" || value=="service"))
+                    {
+                        typemodifier = 1;
+                    }
                     if(key == "lanes")
                     {
                         lanespresent = true;
                         if(std::to_string(i) == value)
                         {
-                            return true;
+                            return 1+typemodifier;
                         }
                     }
                 }
-                if(i == 1 && !lanespresent) return true;
+                if(i == 1 && !lanespresent) return 1+typemodifier;
             }
         } //returns true when the Features inradius contains at least one feature
-        if(radius > tileside) return false;
+        if(radius > tileside) return 0;
         radius=radius+lanewidth*0.5;
     }
     
-    return false;
+    return 0;
 }
 
 /*

@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
     int tilesperside = 100;
     double side = 100;
     double roadscanmodifier = 1;
-    double railscanmodifier = 1;
+    double railscanmodifier = 2.5;
 
     if(argc>3)
     {
@@ -83,34 +83,39 @@ int main(int argc, char* argv[])
             {
                 cchange(8);
                 std::cout<<"X";
-            } else if(isbuilding(features,searchlatlon,tileside))
+            } else if(int retval = isroad(features,searchlatlon,tileside,10,3.5,roadscanmodifier); retval>0)
+            {
+                if(retval==1) cchange(15);
+                if(retval==2) cchange(6);
+                std::cout<<"X";
+            }  else if(isbuilding(features,searchlatlon,tileside))
             {
                 cchange(12);
                 std::cout<<char(254);
-            } else if(isroad(features,searchlatlon,tileside,10,3.5,roadscanmodifier))
-            {
-                cchange(7);
-                std::cout<<"O"; 
             } else if(iswater(features,searchlatlon,tileside))
             {
                 cchange(9);
                 std::cout<<"~";
-            } else if(istree_probability(features,searchlatlon,tileside)==1)
+            } else if(int retval = istree_probability(features,searchlatlon,tileside); retval>0)
             {
-                cchange(2);
-                std::cout<<".";
-            } else if(istree_probability(features,searchlatlon,tileside)==2)
-            {
-                cchange(2);
-                std::cout<<char(159);
-            } else if(islowgreenarea(features,searchlatlon,tileside))
-            {
-                cchange(10);
-                std::cout<<char(137);
+                if(retval==1)
+                {
+                    cchange(2);
+                    std::cout<<".";
+                }
+                if(retval==2)
+                {
+                    cchange(2);
+                    std::cout<<char(159);
+                }
             } else if(ispaved(features,searchlatlon,tileside))
             {
                 cchange(8);
                 std::cout<<"-";
+            }  else if(islowgreenarea(features,searchlatlon,tileside))
+            {
+                cchange(10);
+                std::cout<<char(137);
             }
             else
             {
