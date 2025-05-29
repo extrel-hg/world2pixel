@@ -20,10 +20,8 @@ TO DO:
 */
 
 // latitude longitude tilesperside side radiusmodifier
-
-int main(int argc, char* argv[])
-{
-    file<> xmlFile("test.xml");
+/*
+file<> xmlFile("test.xml");
     xml_document<> doc;
     doc.parse<0>(xmlFile.data());
     xml_node<> *root = doc.first_node();
@@ -37,7 +35,10 @@ int main(int argc, char* argv[])
             std::cout << "Name of one of my nodes is: " << secchild->name()<<" "<<secchild->value() << "\n";
         }
     }
+*/
 
+int main(int argc, char* argv[])
+{
     srand(time(NULL));
     for(int i=0;i<argc;i++)
     {
@@ -93,7 +94,7 @@ int main(int argc, char* argv[])
         for(int x = 0; x < tilesperside; x++)
         {
             std::pair<double,double> searchlatlon = movelatlon_m(targetlatlon,-y*tileside-0.5*tileside,x*tileside+0.5*tileside);
-            if(roadlikepixelcheck(features,searchlatlon,tileside,"*[railway=rail]"))
+            if(roadlikepixelcheck(features,searchlatlon,tileside,"*[railway=rail]","",3,5,"",1))
             {
                 renderpixel((int)'X', 8);
             } else if(roadlikepixelcheck(features,searchlatlon,tileside,"*[highway]","*[highway!=sidewalk,cycleway,footway,pedestrian,path]"))
@@ -118,7 +119,14 @@ int main(int argc, char* argv[])
             }
             else
             {
-                renderpixel(137, 10);
+                if(simplepixelcheck(features,searchlatlon,tileside,"*[admin_level=8]"))
+                {
+                    renderpixel(137, 8);
+                }
+                else 
+                {
+                    renderpixel(137, 10);
+                }
             }
             if(x<tilesperside-1) std::cout<<" ";
         }
