@@ -1,7 +1,5 @@
-int isroad(Features infeatures, std::pair<double,double> searchlatlon, double tileside, int lanestosearch = 10, double lanewidth = 3.5, double scanradiusmodifier = 1);
-bool iswater(Features infeatures, std::pair<double,double> searchlatlon, double tileside);
-bool isbuilding(Features infeatures, std::pair<double,double> searchlatlon, double tileside);
-bool islowgreenarea(Features infeatures, std::pair<double,double> searchlatlon, double tileside);
-bool israilroad(Features infeatures, std::pair<double,double> searchlatlon, double tileside , double lanewidth = 3.5, double scanradiusmodifier=1);
-bool ispaved(Features infeatures, std::pair<double,double> searchlatlon, double tileside);
-int istree_probability(Features infeatures, std::pair<double,double> searchlatlon, double tileside, double treespermetersquare = 0.05, double definitetreeminval = 50);
+bool simplepixelcheck(Features infeatures, std::pair<double,double> searchlatlon, double tileside, std::string filterpositive, std::string filternegative = "", double radiusmultiplier = 1, double radiusmodifier = 0);
+
+int probabilitypixelcheck(Features infeatures, std::pair<double,double> searchlatlon, double tileside, double densitypermetersquare, double tilesideresolutioncutoff, std::string filterpositive, std::string filternegative = "", double radiusmultiplier = 1, double radiusmodifier = 0);
+
+bool roadlikepixelcheck(Features infeatures, std::pair<double,double> searchlatlon, double tileside, std::string filterpositive, std::string filternegative = "", int lanestosearch = 4, double lanewidth = 3.5, double radiusmultiplier = 1, double radiusmodifier = 0);

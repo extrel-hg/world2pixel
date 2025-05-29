@@ -1,6 +1,10 @@
 #include "mainheader.h"
 #include "latlonfunctions.h"
 #include "mapqueryfunctions.h"
+#include "renderfunctions.h"
+
+#include "rapidxml.hpp"
+#include "rapidxml_utils.hpp"
 
 //latitude - north south
 //longitude - east west
@@ -15,15 +19,25 @@ TO DO:
 
 // latitude longitude tilesperside side radiusmodifier
 
-void cchange(int c) //Funkcja zmiany koloru tekstu!
-{
-    HANDLE hConsole;
-    hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, c);
-}
+using namespace rapidxml;
 
 int main(int argc, char* argv[])
 {
+    file<> xmlFile("test.xml");
+    xml_document<> doc;
+    doc.parse<0>(xmlFile.data());
+    xml_node<> *root = doc.first_node();
+
+    xml_node<> *node = root;
+    for (xml_node<> *child = node->first_node(); child; child = child->next_sibling())
+    {
+        std::cout << "Name of checked node: " << child->name()<<" "<<child->value() << "\n";
+        for (xml_node<> *secchild = child->first_node(); secchild; secchild = secchild->next_sibling())
+        {
+            std::cout << "Name of one of my nodes is: " << secchild->name()<<" "<<secchild->value() << "\n";
+        }
+    }
+
     srand(time(NULL));
     for(int i=0;i<argc;i++)
     {
@@ -79,48 +93,32 @@ int main(int argc, char* argv[])
         for(int x = 0; x < tilesperside; x++)
         {
             std::pair<double,double> searchlatlon = movelatlon_m(targetlatlon,-y*tileside-0.5*tileside,x*tileside+0.5*tileside);
-            if(israilroad(features,searchlatlon,tileside,railscanmodifier))
+            if(roadlikepixelcheck(features,searchlatlon,tileside,"*[railway=rail]"))
             {
-                cchange(8);
-                std::cout<<"X";
-            } else if(int retval = isroad(features,searchlatlon,tileside,10,3.5,roadscanmodifier); retval>0)
+                renderpixel((int)'X', 8);
+            } else if(roadlikepixelcheck(features,searchlatlon,tileside,"*[highway]","*[highway!=sidewalk,cycleway,footway,pedestrian,path]"))
             {
-                if(retval==1) cchange(15);
-                if(retval==2) cchange(6);
-                std::cout<<"X";
-            }  else if(isbuilding(features,searchlatlon,tileside))
+                renderpixel((int)'X', 15);
+            }  else if(simplepixelcheck(features,searchlatlon,tileside,"a[building]"))
             {
-                cchange(12);
-                std::cout<<char(254);
-            } else if(iswater(features,searchlatlon,tileside))
+                renderpixel(254, 12);
+            } else if(simplepixelcheck(features,searchlatlon,tileside,"*[water],*[natural=water],*[waterway]"))
             {
-                cchange(9);
-                std::cout<<"~";
-            } else if(int retval = istree_probability(features,searchlatlon,tileside); retval>0)
+                renderpixel((int)'~', 9);
+            } else if(int retval = probabilitypixelcheck(features,searchlatlon,tileside,0.05,10,"*[landuse=forest,orchard],*[natural=wood]"); retval>0)
             {
-                if(retval==1)
-                {
-                    cchange(2);
-                    std::cout<<".";
-                }
-                if(retval==2)
-                {
-                    cchange(2);
-                    std::cout<<char(159);
-                }
-            } else if(ispaved(features,searchlatlon,tileside))
+                renderpixel((int)'.', 2,retval,0,2);
+                renderpixel(159, 2,retval,1,3);
+            } else if(simplepixelcheck(features,searchlatlon,tileside,"*[landuse=commercial,construction,education,industrial,residential,retail,institutional,landfill,port,brownfield]"))
             {
-                cchange(8);
-                std::cout<<"-";
-            }  else if(islowgreenarea(features,searchlatlon,tileside))
+                renderpixel((int)'-', 8);
+            }  else if(simplepixelcheck(features,searchlatlon,tileside,"*[landuse=grass,farmland,farmyard,flowerbed,meadow,plant_nursery,vineyard,greenery,allotments,recreation_ground],*[leisure=park,dogpark,garden,nature_reserve,playground],*[natural=grassland,scrub]"))
             {
-                cchange(10);
-                std::cout<<char(137);
+                renderpixel(137, 10);
             }
             else
             {
-                cchange(10);
-                std::cout<<char(137);
+                renderpixel(137, 10);
             }
             if(x<tilesperside-1) std::cout<<" ";
         }

@@ -11,3 +11,7 @@ CTestTestfile.cmake
 _deps
 CMakeUserPresets.json
 world2pixel/build
+world2pixel/source/rapidxml.hpp
+world2pixel/source/rapidxml_iterators.hpp
+world2pixel/source/rapidxml_print.hpp
+world2pixel/source/rapidxml_utils.hpp

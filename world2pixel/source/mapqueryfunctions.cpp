@@ -1,11 +1,12 @@
 #include "mainheader.h"
 #include <random>
 
-bool ispaved(Features infeatures, std::pair<double,double> searchlatlon, double tileside)
+bool simplepixelcheck(Features infeatures, std::pair<double,double> searchlatlon, double tileside, std::string filterpositive, std::string filternegative = "", double radiusmultiplier = 1, double radiusmodifier = 0)
 {
-    infeatures = infeatures("*[landuse=commercial,construction,education,industrial,residential,retail,institutional,landfill,port,brownfield]");
+    infeatures = infeatures(filterpositive.c_str());
+    if(filternegative!="") infeatures = infeatures(filternegative.c_str());
 
-    double radius = tileside*0.5;
+    double radius = tileside*0.5*radiusmultiplier + radiusmodifier;
 
     double inlon = searchlatlon.second;
     double inlat = searchlatlon.first;
@@ -15,55 +16,13 @@ bool ispaved(Features infeatures, std::pair<double,double> searchlatlon, double 
     return false;
 }
 
-bool islowgreenarea(Features infeatures, std::pair<double,double> searchlatlon, double tileside)
+//0 for no feature, 1 for failed check, 2 for successful check
+int probabilitypixelcheck(Features infeatures, std::pair<double,double> searchlatlon, double tileside, double densitypermetersquare, double tilesideresolutioncutoff, std::string filterpositive, std::string filternegative = "", double radiusmultiplier = 1, double radiusmodifier = 0)
 {
-    infeatures = infeatures("*[landuse=grass,farmland,farmyard,flowerbed,meadow,plant_nursery,vineyard,greenery,allotments,recreation_ground],*[leisure=park,dogpark,garden,nature_reserve,playground],*[natural=grassland,scrub]");
+    infeatures = infeatures(filterpositive.c_str());
+    if(filternegative!="") infeatures = infeatures(filternegative.c_str());
 
-    double radius = tileside*0.5;
-
-    double inlon = searchlatlon.second;
-    double inlat = searchlatlon.first;
-
-    Features inradius = infeatures.maxMetersFromLonLat(radius, inlon, inlat);
-    if(inradius) return true;
-    return false;
-}
-
-bool isbuilding(Features infeatures, std::pair<double,double> searchlatlon, double tileside)
-{
-    infeatures = infeatures("a[building]");
-
-    double radius = tileside*0.5;
-
-    double inlon = searchlatlon.second;
-    double inlat = searchlatlon.first;
-
-    Features inradius = infeatures.maxMetersFromLonLat(radius, inlon, inlat);
-    if(inradius) return true;
-    return false;
-}
-
-bool iswater(Features infeatures, std::pair<double,double> searchlatlon, double tileside)
-{
-    infeatures = infeatures("*[water],*[natural=water],*[waterway]");
-
-    double radius = tileside*0.5;
-
-    double inlon = searchlatlon.second;
-    double inlat = searchlatlon.first;
-
-    Features inradius = infeatures.maxMetersFromLonLat(radius, inlon, inlat);
-    if(inradius) return true;
-    return false;
-}
-
-//For Poland it is 1ha - 500 trees => 1m^2 - 0.05 trees
-int istree_probability(Features infeatures, std::pair<double,double> searchlatlon, double tileside, double treespermetersquare = 0.05, double definitetreeminval = 10)
-{
-    if(definitetreeminval<tileside) return 2;
-    infeatures = infeatures("*[landuse=forest,orchard]");
-
-    double radius = tileside*0.5;
+    double radius = tileside*0.5*radiusmultiplier + radiusmodifier;
 
     double inlon = searchlatlon.second;
     double inlat = searchlatlon.first;
@@ -71,6 +30,7 @@ int istree_probability(Features infeatures, std::pair<double,double> searchlatlo
     int retval = 0;
 
     Features inradius = infeatures.maxMetersFromLonLat(radius, inlon, inlat);
+    if(inradius && tileside > tilesideresolutioncutoff) return 2;
     if(inradius) 
     {
         retval = 1;
@@ -84,25 +44,25 @@ int istree_probability(Features infeatures, std::pair<double,double> searchlatlo
         for(int i = 0; i < rollamount;i++)
         {
             double roll = (double)std::rand()/(double)RAND_MAX;
-            if(roll<treespermetersquare*mod) return 2;
+            if(roll<densitypermetersquare*mod) return 2;
         }
     }
     return retval;
 }
 
-bool israilroad(Features infeatures, std::pair<double,double> searchlatlon, double tileside , double lanewidth = 3.5, double scanradiusmodifier=1)
+bool roadlikepixelcheck(Features infeatures, std::pair<double,double> searchlatlon, double tileside, std::string filterpositive, std::string filternegative = "", int lanestosearch = 4, double lanewidth = 3.5, double radiusmultiplier = 1, double radiusmodifier = 0)
 {
-    infeatures = infeatures("*[railway=rail]");
+    infeatures = infeatures(filterpositive.c_str());
+    if(filternegative!="") infeatures = infeatures(filternegative.c_str());
 
     double inlon = searchlatlon.second;
     double inlat = searchlatlon.first;
 
-    double radius = lanewidth*0.5;
-    int lanestosearch = 10;
+    double radius = lanewidth*0.5*radiusmultiplier + radiusmodifier;
 
     for(int i = 1; i < lanestosearch+1; i++)
     {
-        Features inradius = infeatures.maxMetersFromLonLat(radius*scanradiusmodifier, inlon, inlat);
+        Features inradius = infeatures.maxMetersFromLonLat(radius, inlon, inlat);
         if(inradius) {
             for (Feature curitem: inradius)
             {
@@ -115,67 +75,18 @@ bool israilroad(Features infeatures, std::pair<double,double> searchlatlon, doub
                     if(key == "lanes")
                     {
                         lanespresent = true;
-                        if(std::to_string(i) == value)
+                        if(std::to_string(i+1) == value)
                         {
                             return true;
                         }
                     }
                 }
-                if(i == 1 && !lanespresent) return true;
+                if(i == 2 && !lanespresent) return true;
             }
-        } //returns true when the Features inradius contains at least one feature
-        if(radius > tileside) return false;
+        }
         radius=radius+lanewidth*0.5;
     }
-    
     return false;
-}
-
-int isroad(Features infeatures, std::pair<double,double> searchlatlon, double tileside, int lanestosearch = 10, double lanewidth = 3.5, double scanradiusmodifier=1)
-{
-    infeatures = infeatures("*[highway]");
-    infeatures = infeatures("*[highway!=sidewalk,cycleway,footway,pedestrian,path]");
-
-    double inlon = searchlatlon.second;
-    double inlat = searchlatlon.first;
-
-    double radius = lanewidth*0.5;
-
-    int typemodifier = 0;
-
-    for(int i = 1; i < lanestosearch+1; i++)
-    {
-        Features inradius = infeatures.maxMetersFromLonLat(radius*scanradiusmodifier, inlon, inlat);
-        if(inradius) {
-            for (Feature curitem: inradius)
-            {
-                Tags tags = curitem.tags();
-                bool lanespresent = false;
-                for(Tag curtag: tags)
-                {
-                    std::string key = curtag.key();
-                    std::string value = curtag.value();
-                    if(key == "highway" && (value == "track" || value=="service"))
-                    {
-                        typemodifier = 1;
-                    }
-                    if(key == "lanes")
-                    {
-                        lanespresent = true;
-                        if(std::to_string(i) == value)
-                        {
-                            return 1+typemodifier;
-                        }
-                    }
-                }
-                if(i == 1 && !lanespresent) return 1+typemodifier;
-            }
-        } //returns true when the Features inradius contains at least one feature
-        if(radius > tileside) return 0;
-        radius=radius+lanewidth*0.5;
-    }
-    
-    return 0;
 }
 
 /*

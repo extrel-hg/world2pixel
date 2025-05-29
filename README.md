@@ -2,8 +2,6 @@
 <b>
 Release date: 2025.05.28
 
-CLI version: 0.1.0
-
 EuVer version: 0.1.0
 </b>
 
