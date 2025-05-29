@@ -3,8 +3,10 @@
 #include "mapqueryfunctions.h"
 #include "renderfunctions.h"
 
+
 #include "rapidxml.hpp"
 #include "rapidxml_utils.hpp"
+using namespace rapidxml;
 
 //latitude - north south
 //longitude - east west
@@ -18,8 +20,6 @@ TO DO:
 */
 
 // latitude longitude tilesperside side radiusmodifier
-
-using namespace rapidxml;
 
 int main(int argc, char* argv[])
 {
@@ -102,14 +102,14 @@ int main(int argc, char* argv[])
             }  else if(simplepixelcheck(features,searchlatlon,tileside,"a[building]"))
             {
                 renderpixel(254, 12);
-            } else if(simplepixelcheck(features,searchlatlon,tileside,"*[water],*[natural=water],*[waterway]"))
+            } else if(roadlikepixelcheck(features,searchlatlon,tileside,"*[water],*[natural=water],*[waterway]","",1,5,"",1))
             {
                 renderpixel((int)'~', 9);
             } else if(int retval = probabilitypixelcheck(features,searchlatlon,tileside,0.05,10,"*[landuse=forest,orchard],*[natural=wood]"); retval>0)
             {
                 renderpixel((int)'.', 2,retval,0,2);
                 renderpixel(159, 2,retval,1,3);
-            } else if(simplepixelcheck(features,searchlatlon,tileside,"*[landuse=commercial,construction,education,industrial,residential,retail,institutional,landfill,port,brownfield]"))
+            } else if(simplepixelcheck(features,searchlatlon,tileside,"*[landuse=commercial,construction,education,industrial,residential,retail,institutional,landfill,port,brownfield],*[area:highway]"))
             {
                 renderpixel((int)'-', 8);
             }  else if(simplepixelcheck(features,searchlatlon,tileside,"*[landuse=grass,farmland,farmyard,flowerbed,meadow,plant_nursery,vineyard,greenery,allotments,recreation_ground],*[leisure=park,dogpark,garden,nature_reserve,playground],*[natural=grassland,scrub]"))

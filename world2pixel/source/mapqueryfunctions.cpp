@@ -50,7 +50,7 @@ int probabilitypixelcheck(Features infeatures, std::pair<double,double> searchla
     return retval;
 }
 
-bool roadlikepixelcheck(Features infeatures, std::pair<double,double> searchlatlon, double tileside, std::string filterpositive, std::string filternegative = "", int lanestosearch = 4, double lanewidth = 3.5, double radiusmultiplier = 1, double radiusmodifier = 0)
+bool roadlikepixelcheck(Features infeatures, std::pair<double,double> searchlatlon, double tileside, std::string filterpositive, std::string filternegative = "", int lanestosearch = 4, double lanewidth = 3.5, std::string lanekey = "lanes", int defaultamountoflanes = 2, double radiusmultiplier = 1, double radiusmodifier = 0)
 {
     infeatures = infeatures(filterpositive.c_str());
     if(filternegative!="") infeatures = infeatures(filternegative.c_str());
@@ -60,28 +60,24 @@ bool roadlikepixelcheck(Features infeatures, std::pair<double,double> searchlatl
 
     double radius = lanewidth*0.5*radiusmultiplier + radiusmodifier;
 
-    for(int i = 1; i < lanestosearch+1; i++)
+    for(int i = 1; i <= lanestosearch; i++)
     {
         Features inradius = infeatures.maxMetersFromLonLat(radius, inlon, inlat);
         if(inradius) {
             for (Feature curitem: inradius)
             {
-                Tags tags = curitem.tags();
-                bool lanespresent = false;
+                Tags tags = curitem.tags(); //Gets the amount of lanes
+                int amountoflanes = defaultamountoflanes;
                 for(Tag curtag: tags)
                 {
                     std::string key = curtag.key();
                     std::string value = curtag.value();
-                    if(key == "lanes")
+                    if(key == lanekey)
                     {
-                        lanespresent = true;
-                        if(std::to_string(i+1) == value)
-                        {
-                            return true;
-                        }
+                        amountoflanes = std::stoi(value);
                     }
                 }
-                if(i == 2 && !lanespresent) return true;
+                if(amountoflanes >= i) return true;
             }
         }
         radius=radius+lanewidth*0.5;
