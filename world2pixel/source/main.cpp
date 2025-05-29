@@ -113,15 +113,16 @@ int main(int argc, char* argv[])
             } else if(simplepixelcheck(features,searchlatlon,tileside,"*[landuse=commercial,construction,education,industrial,residential,retail,institutional,landfill,port,brownfield],*[area:highway]"))
             {
                 renderpixel((int)'-', 8);
-            }  else if(simplepixelcheck(features,searchlatlon,tileside,"*[landuse=grass,farmland,farmyard,flowerbed,meadow,plant_nursery,vineyard,greenery,allotments,recreation_ground],*[leisure=park,dogpark,garden,nature_reserve,playground],*[natural=grassland,scrub]"))
+            }  else if(int retval = probabilitypixelcheck(features,searchlatlon,tileside,0.001,15,"*[landuse=grass,farmland,farmyard,flowerbed,meadow,plant_nursery,vineyard,greenery,allotments,recreation_ground],*[leisure=park,dogpark,garden,nature_reserve,playground],*[natural=grassland,scrub]");retval>0)
             {
-                renderpixel(137, 10);
+                renderpixel(137, 10,retval,0,2);
+                renderpixel(int('X'), 42,retval,1,3);
             }
             else
             {
                 if(simplepixelcheck(features,searchlatlon,tileside,"*[admin_level=8]"))
                 {
-                    renderpixel(137, 8);
+                    renderpixel(int('.'), 8);
                 }
                 else 
                 {
