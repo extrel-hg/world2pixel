@@ -4,6 +4,7 @@ project(world2pixel)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
+set(CMAKE_CXX_FLAGS "-static -static-libgcc -static-libstdc++")
 
 file(GLOB sourcefiles
      "source/*.h"
@@ -15,7 +16,6 @@ add_executable(${PROJECT_NAME}
 )
 
 #  GEODESK and GEOS
-
 set(GEODESK_WITH_GEOS ON)
 set(GEOS_INCLUDE_PATHS "${geos_SOURCE_DIR}/include" "${geos_BINARY_DIR}/capi")
 

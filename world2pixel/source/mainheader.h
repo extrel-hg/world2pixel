@@ -4,6 +4,6 @@
 #include <stdlib.h>
 #include <cmath>
 #include <time.h>
-#include <map>
+#include <vector>
 
 using namespace geodesk;
