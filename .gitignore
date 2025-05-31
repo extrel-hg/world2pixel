@@ -10,7 +10,8 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 CMakeUserPresets.json
-world2pixel/build
+world2pixel/build/*
+!world2pixel/build/test.xml
 world2pixel/source/rapidxml.hpp
 world2pixel/source/rapidxml_iterators.hpp
 world2pixel/source/rapidxml_print.hpp

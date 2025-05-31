@@ -110,24 +110,26 @@ int main(int argc, char* argv[])
             {
                 renderpixel((int)'.', 2,retval,0,2);
                 renderpixel(159, 2,retval,1,3);
+            } else if(simplepixelcheck(features,searchlatlon,tileside,"*[power=tower,catenary_mast,pole]","",1,2))
+            {
+                renderpixel((int)'|', 6);
+            } else if(roadlikepixelcheck(features,searchlatlon,tileside,"*[power=line,connection,minor_line]","",10,1.1,"cables",6))
+            {
+                renderpixel((int)'=', 6);
             } else if(simplepixelcheck(features,searchlatlon,tileside,"*[landuse=commercial,construction,education,industrial,residential,retail,institutional,landfill,port,brownfield],*[area:highway]"))
             {
                 renderpixel((int)'-', 8);
-            }  else if(int retval = probabilitypixelcheck(features,searchlatlon,tileside,0.001,15,"*[landuse=grass,farmland,farmyard,flowerbed,meadow,plant_nursery,vineyard,greenery,allotments,recreation_ground],*[leisure=park,dogpark,garden,nature_reserve,playground],*[natural=grassland,scrub]");retval>0)
+            }  else if(simplepixelcheck(features,searchlatlon,tileside,"*[landuse=grass,farmland,farmyard,flowerbed,meadow,plant_nursery,vineyard,greenery,allotments,recreation_ground],*[leisure=park,dogpark,garden,nature_reserve,playground],*[natural=grassland,scrub]"))
             {
-                renderpixel(137, 10,retval,0,2);
-                renderpixel(int('X'), 42,retval,1,3);
+                renderpixel(137, 10);
             }
-            else
+            else if(simplepixelcheck(features,searchlatlon,tileside,"*[admin_level=8]"))
             {
-                if(simplepixelcheck(features,searchlatlon,tileside,"*[admin_level=8]"))
-                {
-                    renderpixel(int('.'), 8);
-                }
-                else 
-                {
-                    renderpixel(137, 10);
-                }
+                renderpixel(int('.'), 8);
+            }
+            else 
+            {
+                renderpixel(137, 10);
             }
             if(x<tilesperside-1) std::cout<<" ";
         }
