@@ -28,11 +28,11 @@ For now, you cannot properly use this program on higher amount of tiles, if you 
 
 ## Examples:
 
-Examples as of now are outdated. They come from version 0.1.0.
+<b>Examples as of now are outdated! They come from version 0.1.0.</b>
 
 ### Small scale:
 
-`.\world2pixel.exe 51.21654, 17.36196 250 1500 1.7 2`  renders the following map (assuming a file called gol.gol exists in current directory, and it contains data for Wroclaw):
+`.\world2pixel.exe 51.21654, 17.36196 250 1500 1.7 2`  renders the following map (assuming a file called gol.gol exists in current directory, and it contains data for Olesnica):
 ![alt text](world2pixel.png)
 
 Comparing it to the OSM render:
